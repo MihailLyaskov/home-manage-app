@@ -1,0 +1,3 @@
+apps:
+  - script   : ./Devicehive-service/service.js
+    name     : 'DeviceHive-connector'

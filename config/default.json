@@ -1,0 +1,29 @@
+{
+  "DeviceHive":{
+    "url": "http://playground.devicehive.com/api/rest",
+    "api_key": "FsJCDRAbjTO+5GA8b0nydWJvtHl4Nwc4wZqHnqM/+Gk="
+  },
+  "device_config": {
+    "guid": "homeassist",
+    "name": "homeassist",
+    "key": "stupud_device_key",
+    "status": "Online",
+    "deviceClass": {
+      "name": "application",
+      "version": "1.0"
+    },
+    "equipment": [
+      {
+        "name": "homeassist",
+        "type": "homeassist",
+        "code": "homeassist"
+      }
+    ],
+    "sub_for_comands":[
+      {"hive":"database/logdata","seneca_service":"role:database,cmd:logdata"}
+    ],
+    "seneca_clients":[
+      {"port":10102,"pin":"role:database"}
+    ]
+  }
+}

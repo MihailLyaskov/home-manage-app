@@ -1,0 +1,18 @@
+{
+  "name": "home-manage-app",
+  "version": "1.0.0",
+  "description": "App helping to manage home apliances",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mihail Lyaskov",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^2.1.4",
+    "config": "^1.24.0",
+    "seneca": "^3.2.2",
+    "ws": "^1.1.1",
+    "xhr2": "^0.1.4"
+  }
+}
