@@ -5,6 +5,7 @@ module.exports = function hiveConnector(options){
   this.add({role:'client', cmd:'sendCommand'},sendCommand);
   this.add({role:'client', cmd:'subscribe'},subscribe);
   this.add({role:'client', cmd:'unsubscribe'},unsubscribe);
+  this.add({role:'client', cmd:'getDevice'},getDevice);
 
   function sendNotification(args,done){
     options.device.sendNotification(args.params.notificationName,args.params.data,function(err,res){
@@ -41,5 +42,12 @@ module.exports = function hiveConnector(options){
     });
   }
 
+  function getDevice(args,done){
+    options.client.getDevice(args.params.DeviceID,function(err,res){
+      if(err) done(err);
+      //console.log(res);
+      done(null,res);
+    });
+  }
 
 }
