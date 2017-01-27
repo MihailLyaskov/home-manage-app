@@ -1,5 +1,7 @@
 apps:
   - script   : ./services/Devicehive-service/service.js
     name     : 'DeviceHive-connector'
-  - script   : ./services/Devicehive-service/test.js
-    name     : 'test'
+    watch    : true
+  - script   : ./services/Database-service/service.js
+    name     : 'database'
+    watch    : true

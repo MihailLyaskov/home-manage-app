@@ -20,7 +20,7 @@
       }
     ],
     "sub_for_comands":[
-      {"hive":"database/logdata","seneca_service":"role:database,cmd:logdata"}
+      {"hive":"database/startLog","seneca_service":"role:database,cmd:startLog"}
     ],
     "seneca_clients":[
       {"port":10102,"pin":"role:database"}

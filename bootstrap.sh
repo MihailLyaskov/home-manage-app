@@ -19,7 +19,7 @@ sudo npm install pm2@latest -g
 
 #Install SQlite
 sudo apt-get update
-sudo apt-get install sqlite3
+sudo apt-get install -y sqlite3
 
 cd /vagrant
 npm install
