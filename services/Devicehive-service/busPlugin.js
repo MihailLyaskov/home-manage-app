@@ -69,7 +69,7 @@ module.exports = function hiveConnector(options) {
     function getDevice(args, done) {
         options.client.getDevice(args.params.DeviceID, function(err, res) {
             if (err) done(err);
-            //console.log(res);
+            console.log(res);
             done(null, res);
         });
     }

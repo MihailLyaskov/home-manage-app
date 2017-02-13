@@ -8,7 +8,18 @@ module.exports = function database(options) {
         role: 'database',
         cmd: 'registerDevice'
     }, registerDevice);
+    this.add({
+        role: 'database',
+        cmd: 'showDevices'
+    }, showDevices);
 
+
+    function showDevices(args, done) {
+        DB.showDevices(function(err, res) {
+            if (err) done(err);
+            done(null, res);
+        });
+    }
 
     function registerDevice(args, done) {
         if (args.hasOwnProperty('deviceID') == true) {
@@ -19,23 +30,29 @@ module.exports = function database(options) {
                 if (err) {
                     console.log(err);
                     done(null, {
-                        asnwer: 'No device found!'
+                        result: err,
+                        status: "ERROR"
                     });
                 }
                 done(null, {
-                    answer: 'Device succesfully registered!'
+                    result: 'Device succesfully registered!',
+                    status: 'OK'
                 })
             });
         } else
             done(null, {
-                answer: 'missing deviceID argument!'
+                result: 'missing deviceID argument!',
+                status: 'ERROR'
             })
     }
 
     function regDevice(args, callback) {
         DB.registerDevice(args, function(err, res) {
             if (err) callback(err);
-            callback(null, res);
+            callback(null, {
+                result: res,
+                status: 'OK'
+            });
         });
     }
 
@@ -49,13 +66,16 @@ module.exports = function database(options) {
                 }
             },
             function(err, res) {
-                if (err) callback(err)
-                callback(null, {
-                    Device: res.name,
-                    Class: res.deviceClass.name,
-                    Ver: res.deviceClass.version,
-                    Network: res.network.name
-                });
+                if (res.lenght == 0) callback(null, {
+                    message: 'No device found!'
+                })
+                else
+                    callback(null, {
+                        Device: res.name,
+                        Class: res.deviceClass.name,
+                        Ver: res.deviceClass.version,
+                        Network: res.network.name
+                    });
             });
     }
 

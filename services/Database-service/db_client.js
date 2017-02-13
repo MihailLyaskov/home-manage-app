@@ -16,7 +16,10 @@ db_client.prototype.registerDevice = function(args, callback) {
             args.Network
         ], function(error, results, fields) {
             if (err) callback(error);
-            callback(null, results);
+            if (results == null)
+                callback('Device already registered!')
+            else
+                callback(null, results);
             connection.release();
         });
     });
@@ -24,11 +27,10 @@ db_client.prototype.registerDevice = function(args, callback) {
 
 db_client.prototype.showDevices = function(callback) {
     pool.getConnection(function(err, connection) {
-        // connected! (unless `err` is set)
         if (err) console.log(err);
         connection.query('call show_devices()', function(error, results, fields) {
             if (err) throw err(error);
-            callback(null, results);
+            callback(null, results[0]);
             connection.release();
         });
     });

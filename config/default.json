@@ -20,6 +20,9 @@
         "sub_for_comands": [{
             "hive": "database/registerDevice",
             "seneca_service": "role:database,cmd:registerDevice"
+        }, {
+            "hive": "database/showDevices",
+            "seneca_service": "role:database,cmd:showDevices"
         }],
         "seneca_clients": [{
             "port": 10102,
