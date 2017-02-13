@@ -9,20 +9,16 @@ sudo npm install npm@latest -g
 sudo npm install pm2@latest -g
 
 # Install MySQL server 5.6
-#sudo apt-get -y install software-properties-common python-software-properties
-#sudo add-apt-repository -y ppa:ondrej/mysql-5.6
-#sudo apt-get update
-#export DEBIAN_FRONTEND="noninteractive"
-#sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password 123456"
-#sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password 123456"
-#sudo apt-get -y install mysql-server
-
-#Install SQlite
+sudo apt-get -y install software-properties-common python-software-properties
+sudo add-apt-repository -y ppa:ondrej/mysql-5.6
 sudo apt-get update
-sudo apt-get install -y sqlite3
+export DEBIAN_FRONTEND="noninteractive"
+sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password 123456"
+sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password 123456"
+sudo apt-get -y install mysql-server
+
 
 cd /vagrant
 npm install
 
-touch database.db
-sqlite3 database.db < ./load_db.sql
+
