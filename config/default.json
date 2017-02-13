@@ -1,29 +1,37 @@
 {
-  "DeviceHive":{
-    "url": "http://playground.devicehive.com/api/rest",
-    "api_key": "FsJCDRAbjTO+5GA8b0nydWJvtHl4Nwc4wZqHnqM/+Gk="
-  },
-  "device_config": {
-    "guid": "homeassist",
-    "name": "homeassist",
-    "key": "stupud_device_key",
-    "status": "Online",
-    "deviceClass": {
-      "name": "application",
-      "version": "1.0"
+    "DeviceHive": {
+        "url": "http://playground.devicehive.com/api/rest",
+        "api_key": "FsJCDRAbjTO+5GA8b0nydWJvtHl4Nwc4wZqHnqM/+Gk="
     },
-    "equipment": [
-      {
+    "device_config": {
+        "guid": "homeassist",
         "name": "homeassist",
-        "type": "homeassist",
-        "code": "homeassist"
-      }
-    ],
-    "sub_for_comands":[
-      {"hive":"database/startLog","seneca_service":"role:database,cmd:startLog"}
-    ],
-    "seneca_clients":[
-      {"port":10102,"pin":"role:database"}
-    ]
-  }
+        "key": "stupud_device_key",
+        "status": "Online",
+        "deviceClass": {
+            "name": "application",
+            "version": "1.0"
+        },
+        "equipment": [{
+            "name": "homeassist",
+            "type": "homeassist",
+            "code": "homeassist"
+        }],
+        "sub_for_comands": [{
+            "hive": "database/registerDevice",
+            "seneca_service": "role:database,cmd:registerDevice"
+        }],
+        "seneca_clients": [{
+            "port": 10102,
+            "pin": "role:database"
+        }]
+    },
+    "database_config": {
+        "connectionLimit": 10,
+        "host": "localhost",
+        "port": 15000,
+        "user": "logger",
+        "password": "142536",
+        "database": "devicelog"
+    }
 }

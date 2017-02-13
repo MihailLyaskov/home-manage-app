@@ -12,10 +12,10 @@ sudo npm install pm2@latest -g
 sudo apt-get -y install software-properties-common python-software-properties
 sudo add-apt-repository -y ppa:ondrej/mysql-5.6
 sudo apt-get update
-export DEBIAN_FRONTEND="noninteractive"
-sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password 123456"
-sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password 123456"
-sudo apt-get -y install mysql-server
+#export DEBIAN_FRONTEND="noninteractive"
+#sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password 123456"
+#sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password 123456"
+#sudo apt-get -y install mysql-server
 
 
 cd /vagrant

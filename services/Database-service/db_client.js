@@ -1,14 +1,7 @@
 // @flow weak
-
+var config = require('config');
 var mysql = require('mysql');
-var pool = mysql.createPool({
-    connectionLimit: 10,
-    host: 'localhost',
-    port: 15000,
-    user: 'logger',
-    password: '142536',
-    database: 'devicelog'
-});
+var pool = mysql.createPool(config.database_config);
 
 var db_client = function() {
 
@@ -16,15 +9,13 @@ var db_client = function() {
 
 db_client.prototype.registerDevice = function(args, callback) {
     pool.getConnection(function(err, connection) {
-        // connected! (unless `err` is set)
-        if (err) console.log(err);
         connection.query('call register_device(?,?,?,?)', [
             args.Device,
             args.Class,
             args.Ver,
             args.Network
         ], function(error, results, fields) {
-            if (err) throw err(error);
+            if (err) callback(error);
             callback(null, results);
             connection.release();
         });
@@ -42,5 +33,7 @@ db_client.prototype.showDevices = function(callback) {
         });
     });
 }
+
+
 
 module.exports = db_client;
