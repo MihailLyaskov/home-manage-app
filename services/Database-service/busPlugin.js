@@ -7,7 +7,7 @@ module.exports = function database(options){
 
 
   function startLog(args,done){
-    DB.startLog(this,args.params,function(err,res){
+    DB.startLog(this,args,function(err,res){
       if(err) done(err);
       done(null,res);
     });
