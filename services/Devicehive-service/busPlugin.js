@@ -1,4 +1,11 @@
 //@flow weak
+/*
+  Description:
+    Here we describe our seneca bus connector used by our DeviceHive connector
+    service. We have every pattern and the corresponding to it function.
+    Every function gets as an argument the DeviceHive connection object, performs
+    its task and returns result to seneca bus.
+*/
 module.exports = function hiveConnector(options) {
     var seneca = this;
     this.add({
