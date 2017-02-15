@@ -12,7 +12,26 @@ module.exports = function database(options) {
         role: 'database',
         cmd: 'showDevices'
     }, showDevices);
+    this.add({
+        role: 'database',
+        cmd: 'logData'
+    }, logData);
 
+    function logData(args, done) {
+        DB.logData(args, function(err, res) {
+            if (err) {
+                console.log(err);
+                done(null, {
+                    result: err,
+                    status: "ERROR"
+                });
+            }
+            done(null, {
+                result: 'Data written!',
+                status: 'OK'
+            })
+        });
+    }
 
     function showDevices(args, done) {
         DB.showDevices(function(err, res) {

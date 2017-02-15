@@ -24,6 +24,10 @@
             "hive": "database/showDevices",
             "seneca_service": "role:database,cmd:showDevices"
         }],
+        "native_commands": [{
+            "hive": "database/subscribe",
+            "seneca_service": "role:database,cmd:logData"
+        }],
         "seneca_clients": [{
             "port": 10102,
             "pin": "role:database"
