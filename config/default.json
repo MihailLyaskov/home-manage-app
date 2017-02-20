@@ -1,29 +1,52 @@
 {
-  "DeviceHive":{
-    "url": "http://playground.devicehive.com/api/rest",
-    "api_key": "FsJCDRAbjTO+5GA8b0nydWJvtHl4Nwc4wZqHnqM/+Gk="
-  },
-  "device_config": {
-    "guid": "homeassist",
-    "name": "homeassist",
-    "key": "stupud_device_key",
-    "status": "Online",
-    "deviceClass": {
-      "name": "application",
-      "version": "1.0"
+    "DeviceHive": {
+        "url": "http://playground.devicehive.com/api/rest",
+        "api_key": "FsJCDRAbjTO+5GA8b0nydWJvtHl4Nwc4wZqHnqM/+Gk="
     },
-    "equipment": [
-      {
-        "name": "homeassist",
-        "type": "homeassist",
-        "code": "homeassist"
-      }
-    ],
-    "sub_for_comands":[
-      {"hive":"database/logdata","seneca_service":"role:database,cmd:logdata"}
-    ],
-    "seneca_clients":[
-      {"port":10102,"pin":"role:database"}
-    ]
-  }
+    "device_config": {
+        "main_config": {
+            "guid": "homeassist",
+            "name": "homeassist",
+            "key": "stupud_device_key",
+            "status": "Online",
+            "deviceClass": {
+                "name": "application",
+                "version": "1.0"
+            },
+            "equipment": [{
+                "name": "homeassist",
+                "type": "homeassist",
+                "code": "homeassist"
+            }]
+        },
+        "sub_for_comands": [{
+            "hive": "database/registerDevice",
+            "seneca_service": "role:database,cmd:registerDevice"
+        }, {
+            "hive": "database/showDevices",
+            "seneca_service": "role:database,cmd:showDevices"
+        }],
+        "services_and_sub_paths": [{
+            "service": "database",
+            "sub_path": "role:database,cmd:logData"
+        }],
+        "seneca_clients": [{
+            "port": 10102,
+            "pin": "role:database"
+        }],
+        "mongo": {
+            "host": "localhost",
+            "port": 15001,
+            "database": "DHConnector",
+            "collection": "subs"
+        }
+    },
+    "database_config": {
+        "connectionLimit": 10,
+        "host": "localhost",
+        "port": 15000,
+        "user": "logger",
+        "password": "142536",
+        "database": "devicelog"
+    }
 }
