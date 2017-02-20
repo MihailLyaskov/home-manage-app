@@ -1,3 +1,4 @@
+// @flow weak
 /*
 Description:
   This file is a wrapper for DeviceHive client and device connector logic.
@@ -5,9 +6,13 @@ Description:
 
 const config = require('config'); // Get configuration file
 const async = require('async');
+const mongo = require('./lib/mongo');
 var hive = null;
 var seneca = require('seneca')(); // Create seneca bus connection
-
+var mongodb = new mongo(config.device_config.mongo, function(err, res) {
+    if (err) console.log(err);
+    //console.log('MONGO STARTED')
+});
 /*
 Here we initialize the device/client object which register the app as a device
 and opens channels for device and client connections. As e result we are given
@@ -28,65 +33,154 @@ var Device = require('./device.js')(function(err, HiveConnections) {
             async.each(config.device_config.sub_for_comands, subscribeForCommands, function(err, res) {
                 if (err) console.log(err)
             });
-            async.each(config.device_config.native_commands, subscribeForNative, function(err, res) {
-                if (err) console.log(err)
+            subscribeForNative(['connector/subscribe', 'connector/unsubscribe', 'connector/showSubs'], function(err, res) {
+                if (err) console.log(err);
+                //console.log(res);
             });
         });
 });
 
-function subscribeForNative(command, callback) {
+function subscribeForNative(commands, callback) {
     var subcmd = hive.device.subscribe(function(err, res) {
         if (err) callback(err, null);
         console.log('DEVICE SUBSCRIBES TO MASAGES ' + JSON.stringify(res));
         callback(null, res);
     }, {
-        names: [command.hive]
+        names: commands
     });
     subcmd.message(function(cmd) {
-        if (cmd.command == command.hive) {
+        if (cmd.command == 'connector/subscribe') {
             //console.log("DATABASE SUBSCRIBEEE! \n" + JSON.stringify(cmd));
-            if (cmd.parameters.hasOwnProperty('deviceID') == true && cmd.parameters.hasOwnProperty('notification') == true) {
+            if (cmd.parameters.hasOwnProperty('deviceID') == true &&
+                cmd.parameters.hasOwnProperty('notification') == true &&
+                cmd.parameters.hasOwnProperty('service') == true) {
                 //console.log("properties are present!")
-                makeClientSub(cmd, command, function(err, res) {
+                addClientSub(cmd, function(err, res) {
                     if (err) cmd.update(err);
                     cmd.update({
-                        "command": command.hive,
+                        "command": 'connector/subscribe',
                         "status": "Ok",
                         "result": "Subscribe Done!"
                     });
                 })
             } else {
                 cmd.update({
-                    "command": command.hive,
+                    "command": 'connector/subscribe',
                     "status": "ERROR",
-                    "result": "Missing deviceID or notification argument!"
+                    "result": "Missing deviceID , notification or service argument!"
+                })
+            }
+        } else if (cmd.command == 'connector/showSubs') {
+            mongodb.showSubs(function(err, res) {
+                if (err)
+                    cmd.update({
+                        "command": 'connector/showSubs',
+                        "status": "Error",
+                        "result": "Error!"
+                    });
+                else {
+                    cmd.update({
+                        "command": 'connector/showSubs',
+                        "status": "OK",
+                        "result": res
+                    });
+                }
+            });
+        } else {
+            //console.log("DATABASE SUBSCRIBEEE! \n" + JSON.stringify(cmd));
+            if (cmd.parameters.hasOwnProperty('deviceID') == true &&
+                cmd.parameters.hasOwnProperty('service') == true) {
+                //console.log("properties are present!")
+                removeClientSub(cmd, function(err, res) {
+                    if (err) cmd.update(err);
+                    cmd.update({
+                        "command": 'connector/unsubscribe',
+                        "status": "Ok",
+                        "result": "Unsubscribe Done!"
+                    });
+                })
+            } else {
+                cmd.update({
+                    "command": 'connector/unsubscribe',
+                    "status": "ERROR",
+                    "result": "Missing deviceID and service arguments!"
                 })
             }
         }
-    });
+    })
+};
+
+function removeClientSub(cmd, callback) {
+    async.waterfall([
+        async.apply(mongodb.findSub, {
+            Device: cmd.parameters.deviceID,
+            subService: cmd.parameters.service
+        }),
+        unsubscribe,
+        mongodb.removeSub,
+    ], function(err, res) {
+        if (err)
+            callback({
+                "command": 'connector/unsubscribe',
+                "status": "ERROR",
+                "result": "Can't unsubscribe for device!"
+            })
+        else {
+            callback(null);
+        }
+    })
 }
 
-function makeClientSub(cmd, commandCfg, callback) {
+function unsubscribe(args, callback) {
+    //console.log(args);
+    hive.client.unsubscribe(args.subID,
+        function(err, res) {
+            //console.log('UNSUBSCRIBING!');
+            //console.log(res)
+            if (err) callback(err)
+            else callback(null, args)
+        })
+}
+
+function addClientSub(cmd, callback) {
     //console.log("MAKE CLIENT SUB")
     hive.client.subscribe(
         function(err, subscription) {
             if (err)
                 callback({
-                    "command": command.hive,
+                    "command": 'connector/subscribe',
                     "status": "ERROR",
                     "result": "Can't subscribe for device!"
                 })
-
+            callback(null)
+            //console.log(subscription);
+            mongodb.addSub({
+                Device: cmd.parameters.deviceID,
+                notification: cmd.parameters.notification,
+                subID: subscription.id,
+                subService: cmd.parameters.service
+            }, function(err, res) {
+                if (err) console.log(err);
+            })
             //console.log("SUBSCRIBE DONE")
             subscription.message(function(deviceIds, options) {
-                seneca.act(commandCfg.seneca_service, {
-                    Device: cmd.parameters.deviceID,
-                    power: options.parameters.power,
-                    energy: options.parameters.energy
-                }, function(err, res) {
-                    if (err) console.log(err);
-                    callback(null);
-                });
+                //console.log(options)
+                async.each(config.device_config.services_and_sub_paths,
+                    function(service, callback) {
+                        if (service.service == cmd.parameters.service) {
+                            options.parameters.Device = deviceIds;
+                            //console.log(options);
+                            seneca.act(service.sub_path, options.parameters, function(err, res) {
+                                if (err) callback(err);
+                                callback(null);
+                            });
+                        } else {
+                            callback(null);
+                        }
+                    },
+                    function(err, res) {
+                        if (err) console.log(err);
+                    });
             });
 
         }, {
@@ -97,7 +191,7 @@ function makeClientSub(cmd, commandCfg, callback) {
             }
         }
     );
-}
+};
 
 function subscribeForCommands(command, callback) {
     var subcmd = hive.device.subscribe(function(err, res) {
@@ -127,7 +221,7 @@ function subscribeForCommands(command, callback) {
             })
         }
     });
-}
+};
 
 function createClients(client, callback) {
     seneca.client(client);

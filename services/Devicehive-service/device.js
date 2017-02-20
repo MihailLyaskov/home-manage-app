@@ -24,9 +24,9 @@ module.exports = function Device(callback) {
 }
 
 function registerDevice(callback) {
-    const DeviceConnection = new DeviceConnector(_config.DeviceHive.url, _config.device_config.guid, _config.DeviceHive.api_key);
+    const DeviceConnection = new DeviceConnector(_config.DeviceHive.url, _config.device_config.main_config.guid, _config.DeviceHive.api_key);
     DeviceConnection.registerDevice(
-        _config.device_config,
+        _config.device_config.main_config,
         function(err, res) {
             if (err)
                 callback(err, null);
