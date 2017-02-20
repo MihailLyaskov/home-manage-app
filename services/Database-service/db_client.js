@@ -39,7 +39,7 @@ db_client.prototype.showDevices = function(callback) {
 db_client.prototype.logData = function(args, callback) {
     pool.getConnection(function(err, connection) {
         //console.log("ARGUMEEEEEEENNNTTTSSS!")
-        //console.log(args);
+        console.log([args.Device, args.power, args.energy]);
         if (err) console.log(err);
         connection.query('call log_data(?,?,?)', [args.Device, args.power, args.energy], function(error, results, fields) {
             if (results != null)

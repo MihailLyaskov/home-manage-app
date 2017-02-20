@@ -20,6 +20,8 @@ and opens channels for device and client connections. As e result we are given
   1) Create client connections to the other service on seneca bus by using the config file.
   2) Subscribe the connector device for the according commands used by the other services
       and direct them to the corresponding seneca bus patterns using again config file.
+  3) Subscribe the connector device for native commands for managing subscriptions dedicated to
+      other services.
 */
 var Device = require('./device.js')(function(err, HiveConnections) {
     hive = HiveConnections;
@@ -37,8 +39,72 @@ var Device = require('./device.js')(function(err, HiveConnections) {
                 if (err) console.log(err);
                 //console.log(res);
             });
+            initialNotificationSub(function(err, res) {
+                if (err) console.log(err);
+                console.log(res);
+            });
         });
 });
+
+function subscribeAndUpdate(args, callback) {
+    hive.client.subscribe(
+        function(err, subscription) {
+            if (err) callback(err);
+            //console.log(subscription);
+            mongodb.updateSub({
+                Device: args.Device,
+                notification: args.notification,
+                subID: args.subID,
+                subService: args.subService
+            }, {
+                subID: subscription.id
+            }, function(err, res) {
+                if (err) callback(err);
+            })
+            //console.log("SUBSCRIBE DONE")
+            subscription.message(function(deviceIds, options) {
+                //console.log(options)
+                async.each(config.device_config.services_and_sub_paths,
+                    function(service, callback) {
+                        if (service.service == args.subService) {
+                            options.parameters.Device = deviceIds;
+                            //console.log(options);
+                            seneca.act(service.sub_path, options.parameters, function(err, res) {
+                                if (err) callback(err);
+                                callback(null);
+                            });
+                        } else {
+                            callback(null);
+                        }
+                    },
+                    function(err, res) {
+                        if (err) console.log(err);
+                    });
+            });
+            callback(null);
+
+        }, {
+            subscription: {
+                deviceIds: args.Device,
+                names: args.notification,
+                onMessage: args.notification
+            }
+        }
+    );
+}
+
+function initialNotificationSub(callback) {
+    mongodb.showSubs(function(err, res) {
+        if (err) console.error(err)
+        else if (res.length == 0)
+            callback(null, 'Subscription database is empty! :)');
+        else {
+            async.each(res, subscribeAndUpdate, function(err, res) {
+                if (err) console.log(err);
+            })
+        }
+    });
+}
 
 function subscribeForNative(commands, callback) {
     var subcmd = hive.device.subscribe(function(err, res) {
