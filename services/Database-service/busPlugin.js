@@ -41,11 +41,11 @@ module.exports = function database(options) {
     }
 
     function registerDevice(args, done) {
-        if (args.hasOwnProperty('deviceID') == true) {
-            async.waterfall([
-                async.apply(getDevice, args.deviceID),
-                regDevice
-            ], function(err, res) {
+        if (args.hasOwnProperty('Device') == true &&
+            args.hasOwnProperty('Class') == true &&
+            args.hasOwnProperty('ClassVer') == true &&
+            args.hasOwnProperty('Network') == true) {
+            regDevice(args, function(err, res) {
                 if (err) {
                     console.log(err);
                     done(null, {
@@ -60,7 +60,7 @@ module.exports = function database(options) {
             });
         } else
             done(null, {
-                result: 'missing deviceID argument!',
+                result: 'Missing arguments!',
                 status: 'ERROR'
             })
     }

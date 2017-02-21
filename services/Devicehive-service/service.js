@@ -125,7 +125,7 @@ function subscribeForNative(commands, callback) {
                     if (err) cmd.update(err);
                     cmd.update({
                         "command": 'connector/subscribe',
-                        "status": "Ok",
+                        "status": "OK",
                         "result": "Subscribe Done!"
                     });
                 })
@@ -161,7 +161,7 @@ function subscribeForNative(commands, callback) {
                     if (err) cmd.update(err);
                     cmd.update({
                         "command": 'connector/unsubscribe',
-                        "status": "Ok",
+                        "status": "OK",
                         "result": "Unsubscribe Done!"
                     });
                 })

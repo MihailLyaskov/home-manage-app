@@ -12,7 +12,7 @@ db_client.prototype.registerDevice = function(args, callback) {
         connection.query('call register_device(?,?,?,?)', [
             args.Device,
             args.Class,
-            args.Ver,
+            args.ClassVer,
             args.Network
         ], function(error, results, fields) {
             if (err) callback(error);
