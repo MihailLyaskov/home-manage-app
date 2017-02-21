@@ -117,7 +117,7 @@ function subscribeForNative(commands, callback) {
     subcmd.message(function(cmd) {
         if (cmd.command == 'connector/subscribe') {
             //console.log("DATABASE SUBSCRIBEEE! \n" + JSON.stringify(cmd));
-            if (cmd.parameters.hasOwnProperty('deviceID') == true &&
+            if (cmd.parameters.hasOwnProperty('Device') == true &&
                 cmd.parameters.hasOwnProperty('notification') == true &&
                 cmd.parameters.hasOwnProperty('service') == true) {
                 //console.log("properties are present!")
@@ -133,7 +133,7 @@ function subscribeForNative(commands, callback) {
                 cmd.update({
                     "command": 'connector/subscribe',
                     "status": "ERROR",
-                    "result": "Missing deviceID , notification or service argument!"
+                    "result": "Missing Device , notification or service argument!"
                 })
             }
         } else if (cmd.command == 'connector/showSubs') {
@@ -154,7 +154,7 @@ function subscribeForNative(commands, callback) {
             });
         } else {
             //console.log("DATABASE SUBSCRIBEEE! \n" + JSON.stringify(cmd));
-            if (cmd.parameters.hasOwnProperty('deviceID') == true &&
+            if (cmd.parameters.hasOwnProperty('Device') == true &&
                 cmd.parameters.hasOwnProperty('service') == true) {
                 //console.log("properties are present!")
                 removeClientSub(cmd, function(err, res) {
@@ -169,7 +169,7 @@ function subscribeForNative(commands, callback) {
                 cmd.update({
                     "command": 'connector/unsubscribe',
                     "status": "ERROR",
-                    "result": "Missing deviceID and service arguments!"
+                    "result": "Missing Device and service arguments!"
                 })
             }
         }
@@ -179,7 +179,7 @@ function subscribeForNative(commands, callback) {
 function removeClientSub(cmd, callback) {
     async.waterfall([
         async.apply(mongodb.findSub, {
-            Device: cmd.parameters.deviceID,
+            Device: cmd.parameters.Device,
             subService: cmd.parameters.service
         }),
         unsubscribe,
@@ -221,7 +221,7 @@ function addClientSub(cmd, callback) {
             callback(null)
             //console.log(subscription);
             mongodb.addSub({
-                Device: cmd.parameters.deviceID,
+                Device: cmd.parameters.Device,
                 notification: cmd.parameters.notification,
                 subID: subscription.id,
                 subService: cmd.parameters.service
@@ -251,7 +251,7 @@ function addClientSub(cmd, callback) {
 
         }, {
             subscription: {
-                deviceIds: cmd.parameters.deviceID,
+                deviceIds: cmd.parameters.Device,
                 names: cmd.parameters.notification,
                 onMessage: cmd.parameters.notification
             }
