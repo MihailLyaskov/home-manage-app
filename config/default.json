@@ -36,7 +36,7 @@
         }],
         "mongo": {
             "host": "localhost",
-            "port": 15001,
+            "port": 27017,
             "database": "DHConnector",
             "collection": "subs"
         }
@@ -44,7 +44,7 @@
     "database_config": {
         "connectionLimit": 10,
         "host": "localhost",
-        "port": 15000,
+        "port": 3306,
         "user": "logger",
         "password": "142536",
         "database": "devicelog"
