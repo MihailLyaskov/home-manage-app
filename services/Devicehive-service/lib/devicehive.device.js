@@ -1500,7 +1500,8 @@
                     try {
                         response = JSON.parse(e.data);
                     } catch (err) {
-                        var temp = e.data.replace("�~\u0000�", "{");
+                        var temp = e.data.substring(str.indexOf("\""));
+                        var temp = "{" + temp;
                         console.log(e);
                         console.error(err);
                         console.log(temp);
