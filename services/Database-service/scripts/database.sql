@@ -115,6 +115,21 @@ END$$
 
 DELIMITER ;
 
+USE `devicelog`;
+DROP procedure IF EXISTS `get_data`;
+
+DELIMITER $$
+USE `devicelog`$$
+CREATE PROCEDURE `get_data`(in dev_name varchar(20) , begin timestamp, end timestamp)
+BEGIN
+    select avg(REAL_P) as power , sum(ENERGY) as energy
+    from devicelog.DATA_LOG_TBL
+    where (TIME between begin and end) and DEV_ID = (select id from devicelog.DEVICE_TBL where DEV_NAME = dev_name);
+END$$
+
+DELIMITER ;
+
 GRANT EXECUTE ON PROCEDURE devicelog.register_device TO 'logger'@'%';
 GRANT EXECUTE ON PROCEDURE devicelog.log_data TO 'logger'@'%';
 GRANT EXECUTE ON PROCEDURE devicelog.show_devices TO 'logger'@'%';
+GRANT EXECUTE ON PROCEDURE devicelog.get_data TO 'logger'@'%';

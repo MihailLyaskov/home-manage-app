@@ -16,6 +16,34 @@ module.exports = function database(options) {
         role: 'database',
         cmd: 'logData'
     }, logData);
+    this.add({
+        role: 'database',
+        cmd: 'getData'
+    }, getData)
+
+    function getData(args, done) {
+        if (args.hasOwnProperty('Date') == true &&
+            args.hasOwnProperty('Device') == true) {
+            DB.getHourlyData(args, function(err, res) {
+                if (err) {
+                    console.log(err);
+                    done(null, {
+                        result: err,
+                        status: "ERROR"
+                    })
+                }
+                done(null, {
+                    result: res,
+                    status: 'OK'
+                })
+            })
+        } else
+            done(null, {
+                result: 'Missing arguments!Device or Date (\'YY:MM:DD\')',
+                status: 'ERROR'
+            })
+
+    }
 
     function logData(args, done) {
         DB.logData(args, function(err, res) {

@@ -25,6 +25,9 @@
         }, {
             "hive": "database/showDevices",
             "seneca_service": "role:database,cmd:showDevices"
+        }, {
+            "hive": "database/getData",
+            "seneca_service": "role:database,cmd:getData"
         }],
         "services_and_sub_paths": [{
             "service": "database",
