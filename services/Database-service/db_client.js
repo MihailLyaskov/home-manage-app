@@ -32,10 +32,10 @@ db_client.prototype.showDevices = function(callback) {
         connection.query('call show_devices()', function(error, results, fields) {
             if (err) throw err(error);
             callback(null, {
-                Device: results[0].DEV_NAME,
-                class: results[0].CLASS_NAME,
-                network: results[0].NETWORK_NAME,
-                classVer: results[0].VER
+                "Device": results[0].device,
+                "class": results[0].class,
+                "network": results[0].network,
+                "classVer": results[0].classVer
             });
             connection.release();
         });

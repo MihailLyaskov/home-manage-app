@@ -91,7 +91,7 @@ USE `devicelog`$$
 CREATE PROCEDURE `show_devices` ()
 BEGIN
 
-select DEV_NAME , CLASS_NAME , VER , NETWORK_NAME
+select DEV_NAME as device , CLASS_NAME as class , VER as classVer, NETWORK_NAME as network
 from DEVICE_TBL , CLASS_TBL
 where DEVICE_TBL.CLASS_ID = CLASS_TBL.ID;
 
