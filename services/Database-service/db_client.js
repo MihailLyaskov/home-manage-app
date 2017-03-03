@@ -31,11 +31,13 @@ db_client.prototype.showDevices = function(callback) {
         if (err) console.log(err);
         connection.query('call show_devices()', function(error, results, fields) {
             if (err) throw err(error);
+            var string = JSON.stringify(results[0]);
+            var jsoned = JSON.parse(string);
             callback(null, {
-                "Device": results[0].device,
-                "class": results[0].class,
-                "network": results[0].network,
-                "classVer": results[0].classVer
+                "Device": jsoned[0].device,
+                "class": jsoned[0].class,
+                "network": jsoned[0].network,
+                "classVer": jsoned[0].classVer
             });
             connection.release();
         });
